@@ -42,6 +42,7 @@ public class ProductController {
         return productService.getProductById(productId);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/update-product")
     public ProductRequest updateProduct(@RequestParam("id") String productId, @RequestBody ProductRequest productRequest) {
         return productService.updateProduct(productId, productRequest);
