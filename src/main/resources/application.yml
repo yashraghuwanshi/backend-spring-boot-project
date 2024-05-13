@@ -1,0 +1,62 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: backend-spring-boot-project
+  datasource:
+    url: jdbc:mysql://localhost:3306/productdb
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+  jpa:
+    properties:
+      hibernate:
+        dialect:
+          - org.hibernate.dialect.MySQL8Dialect
+
+      format_sql: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+
+
+  output:
+    ansi:
+      enabled: always
+
+  profiles:
+    default: local
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: info, metrics
+  info:
+    env:
+      enabled: true
+    java:
+      enabled: true
+    build:
+      enabled: true
+    os:
+      enabled: true
+
+#custom properties
+info:
+  app:
+    name: backend-spring-boot-project
+    version: v0.0.1
+
+
+logging:
+  level:
+    root: info
+    org.hibernate.SQL: info
+    org.springframework.web: debug
