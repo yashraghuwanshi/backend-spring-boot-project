@@ -43,7 +43,7 @@ public class ProductController {
     }
 
     @PostMapping("/update-product")
-    public ProductRequest updateProduct(@RequestParam("id") String productId, ProductRequest productRequest) {
+    public ProductRequest updateProduct(@RequestParam("id") String productId, @RequestBody ProductRequest productRequest) {
         return productService.updateProduct(productId, productRequest);
     }
 
