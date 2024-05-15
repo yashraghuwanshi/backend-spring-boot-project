@@ -16,4 +16,5 @@ public class SupplierResponse {
     private Long phone;
     private String email;
     private String address;
+    private Boolean isDeleted = false;
 }

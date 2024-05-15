@@ -1,6 +1,7 @@
 package com.example.dto;
 
 import com.example.model.Supplier;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +22,6 @@ public class ProductResponse {
     private String description;
     private BigDecimal price;
     private Integer quantity;
+    private Boolean isDeleted = false;
     private List<SupplierResponse> suppliers;
 }

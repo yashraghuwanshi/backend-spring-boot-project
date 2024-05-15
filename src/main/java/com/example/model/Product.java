@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,8 @@ public class Product {
     private String description;
     private BigDecimal price;
     private Integer quantity;
+    @Column(columnDefinition = "BOOLEAN DEFAULT false")
+    private Boolean isDeleted = false;
 
     @OneToMany(targetEntity = Supplier.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "id")

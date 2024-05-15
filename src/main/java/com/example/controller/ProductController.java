@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RequestMapping("/api/v1")
 @RestController
@@ -31,20 +32,20 @@ public class ProductController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/get-products")
-    public List<ProductResponse> getProducts() {
+    public CompletableFuture<List<ProductResponse>> getProducts() {
         return productService.getProducts();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/get-product/{id}")
-    public ProductResponse getProduct(@PathVariable("id") String productId, @RequestHeader("User-Agent") String userAgent) {
+    public CompletableFuture<ProductResponse> getProduct(@PathVariable("id") String productId, @RequestHeader("User-Agent") String userAgent) {
         logger.info("User Agent: {}", userAgent);
         return productService.getProductById(productId);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/update-product")
-    public ProductRequest updateProduct(@RequestParam("id") String productId, @RequestBody ProductRequest productRequest) {
+    @PutMapping("/update-product/{id}")
+    public ProductRequest updateProduct(@PathVariable("id") String productId, @RequestBody ProductRequest productRequest) {
         return productService.updateProduct(productId, productRequest);
     }
 
@@ -52,6 +53,12 @@ public class ProductController {
     @DeleteMapping("/delete-product/{id}")
     public void updateProduct(@PathVariable("id") String productId) {
         productService.deleteProductById(productId);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/soft-delete-product/{id}")
+    public void softDelete(@PathVariable("id") String productId) {
+        productService.softDelete(productId);
     }
 
 }

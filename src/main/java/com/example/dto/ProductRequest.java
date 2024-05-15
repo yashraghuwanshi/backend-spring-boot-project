@@ -1,5 +1,7 @@
 package com.example.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +21,9 @@ public class ProductRequest {
     private String description;
     private BigDecimal price;
     private Integer quantity;
+
+    @JsonIgnore
+    private Boolean isDeleted = false;
 
     private List<SupplierRequest> suppliers;
 

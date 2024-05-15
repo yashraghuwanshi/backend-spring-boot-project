@@ -11,16 +11,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "SUPPLIER_TBL")
-public class Supplier {
+@Table(name = "FILE_UPLOAD_TBL")
+public class FileUpload {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String name;
-    private Long phone;
     private String email;
-    private String address;
-    @Column(columnDefinition = "BOOLEAN DEFAULT false")
-    private Boolean isDeleted = false;
+    private String username;
+    private String password;
+
+    private String fromEmail;
+    private String subjectBody;
+    private String textBody;
+
+    @Lob
+    @Column(columnDefinition = "BLOB")
+    private byte[] fileData;
 }

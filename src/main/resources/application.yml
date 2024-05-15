@@ -14,14 +14,27 @@ spring:
       hibernate:
         dialect:
           - org.hibernate.dialect.MySQL8Dialect
-
       format_sql: true
     hibernate:
       ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
-
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      file-size-threshold: 2KB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: yash.sanjay.raghuwanshi@gmail.com
+    password: qxwd mzii pyma fncu
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   output:
     ansi:
