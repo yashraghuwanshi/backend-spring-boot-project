@@ -1,5 +1,4 @@
 # Define the services for this application
-
 services:
 
   # MySQL database service
@@ -9,7 +8,7 @@ services:
     # Set a custom container name for easier identification
     container_name: mysqldb
     # Expose port 3307 on the host machine to map to port 3306 within the container
-    # This allows you to connect to the MySQL database from the host using port 3307.
+    # This allows us to connect to the MySQL database from the host using port 3307.
     ports:
       - 3307:3306
     # Set environment variables for the MySQL container:
@@ -28,13 +27,13 @@ services:
     # Build the Spring Boot application image from the current directory (.)
     build:
       context: .
-      dockerfile: Dockerfile  # Assuming your Dockerfile is named Dockerfile in the current directory
+      dockerfile: Dockerfile  # Assuming the Dockerfile is named Dockerfile in the current directory
     # Tag the built image with the name spring-boot-app and version v1.0
     image: yashraghuwanshi/spring-boot-app:v1.0
     # Set a custom container name for easier identification
     container_name: spring-boot-app
     # Expose port 9090 on the host machine to map to port 9090 within the container
-    # This allows you to access your Spring Boot application on port 9090 of the host machine.
+    # This allows us to access your Spring Boot application on port 9090 of the host machine.
     ports:
       - 9090:9090
     # Set environment variables for the Spring Boot application container:

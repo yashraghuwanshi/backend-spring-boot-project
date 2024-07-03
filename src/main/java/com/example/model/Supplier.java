@@ -21,6 +21,8 @@ public class Supplier {
     private Long phone;
     private String email;
     private String address;
+
+    @Builder.Default
     @Column(columnDefinition = "BOOLEAN DEFAULT false")
     private Boolean isDeleted = false;
 }

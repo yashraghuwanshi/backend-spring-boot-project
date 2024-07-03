@@ -3,6 +3,8 @@ package com.example.controller;
 import com.example.dto.ProductRequest;
 import com.example.dto.ProductResponse;
 import com.example.service.ProductService;
+import com.github.fge.jsonpatch.JsonPatch;
+import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("all")
 @RequestMapping("/api/v1")
 @RestController
 @CrossOrigin(origins = {"http://localhost:4200/"})
@@ -44,11 +47,24 @@ public class ProductController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/get-product")
+    public ProductResponse getProductByName(@RequestParam(value = "name") String productName) {
+        return productService.getProductByName(productName);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping("/update-product/{id}")
     public ProductRequest updateProduct(@PathVariable("id") String productId, @RequestBody ProductRequest productRequest) {
         return productService.updateProduct(productId, productRequest);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping(value = "/patch-product/{id}", consumes = "application/json-patch+json")
+    public ProductRequest patchProduct(@PathVariable("id") String productId, @RequestBody JsonPatch jsonPatch) {
+        return productService.patchProduct(productId, jsonPatch);
+    }
+
+    @Operation(hidden = true)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete-product/{id}")
     public void updateProduct(@PathVariable("id") String productId) {

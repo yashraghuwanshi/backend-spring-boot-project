@@ -9,14 +9,24 @@ import com.example.model.Product;
 import com.example.model.Supplier;
 import com.example.repository.ProductRepository;
 import com.example.repository.SupplierRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
+import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -30,8 +40,11 @@ public class ProductServiceImpl implements ProductService {
 
     private final ModelMapper mapper;
 
+    private final SessionFactory sessionFactory;
+
+    private final ObjectMapper objectMapper;
+
     @LogExecutionTime
-    @Async
     @Override
     public String saveProduct(ProductRequest productRequest) {
         log.info("{} is executing the saveProduct()", Thread.currentThread().getName());
@@ -72,6 +85,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ProductResponse getProductByName(String name){
+        Product product = productRepository.findByName(name);
+        return mapper.map(product, ProductResponse.class);
+    }
+
+    @Override
     public ProductRequest updateProduct(String id, ProductRequest productRequest) {
 
         System.out.println(productRequest);
@@ -95,6 +114,29 @@ public class ProductServiceImpl implements ProductService {
         System.out.println("Updated Product " + product);
 
         return mapper.map(product, ProductRequest.class);
+    }
+
+    @Override
+    public ProductRequest patchProduct(String id, JsonPatch jsonPatch) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product with id: '" + id + "' does not exist in database."));
+
+        Product patchedProduct = null;
+
+        try {
+            patchedProduct = applyPatchToProduct(jsonPatch, product);
+            productRepository.save(patchedProduct);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return mapper.map(patchedProduct, ProductRequest.class);
+    }
+
+    private Product applyPatchToProduct(
+            JsonPatch jsonPatch, Product product) throws JsonPatchException, JsonProcessingException {
+        JsonNode patched = jsonPatch.apply(objectMapper.convertValue(product, JsonNode.class));
+        return objectMapper.treeToValue(patched, Product.class);
     }
 
     @Override
@@ -125,6 +167,7 @@ public class ProductServiceImpl implements ProductService {
         */
     }
 
+
     private Supplier mapToSupplier(SupplierRequest supplierRequest) {
         return Supplier.builder()
                 .name(supplierRequest.getName())
@@ -132,5 +175,20 @@ public class ProductServiceImpl implements ProductService {
                 .email(supplierRequest.getEmail())
                 .address(supplierRequest.getAddress())
                 .build();
+    }
+
+    public void getSession(){
+
+        Session session = sessionFactory.getCurrentSession();
+
+        Transaction transaction = session.beginTransaction();
+
+        String hql = "SELECT * FROM Product WHERE id = ";
+
+        Query<Product> query = session.createQuery(hql, Product.class);
+
+        query.executeUpdate();
+
+
     }
 }

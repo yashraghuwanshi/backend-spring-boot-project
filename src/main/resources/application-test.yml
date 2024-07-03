@@ -1,0 +1,18 @@
+server:
+  port: 7777
+
+spring:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      schema-locations:
+        - 'classpath:initial-schema.sql'
+      data-locations:
+        - 'classpath:initial-data.sql'
+      mode: embedded

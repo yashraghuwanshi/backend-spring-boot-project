@@ -13,4 +13,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Transactional
     @Query("UPDATE Product e SET e.isDeleted = true WHERE e.id = :id")
     void softDeleteById(@Param("id") String productID);
+
+    Product findByName(String name);
 }

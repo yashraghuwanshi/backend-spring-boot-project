@@ -1,29 +1,17 @@
-server:
-  port: 9090
-
 spring:
+  profiles:
+    active:
+      - dev
+    default: local
+
   application:
     name: backend-spring-boot-project
-  datasource:
-    url: jdbc:mysql://localhost:3306/productdb
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: root
-  jpa:
-    properties:
-      hibernate:
-        dialect:
-          - org.hibernate.dialect.MySQL8Dialect
-      format_sql: true
-    hibernate:
-      ddl-auto: update
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    show-sql: true
+
   servlet:
     multipart:
       max-file-size: 200MB
       file-size-threshold: 2KB
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -39,9 +27,6 @@ spring:
   output:
     ansi:
       enabled: always
-
-  profiles:
-    default: local
 
 management:
   endpoint:
@@ -67,9 +52,14 @@ info:
     name: backend-spring-boot-project
     version: v0.0.1
 
+#my:
+#  server:
+#    name: backend-server
+#    port: 8888
 
 logging:
   level:
     root: info
     org.hibernate.SQL: info
     org.springframework.web: debug
+

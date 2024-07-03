@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class BackendSpringBootProjectApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BackendSpringBootProjectApplication.class, args);
+		 SpringApplication.run(BackendSpringBootProjectApplication.class, args);
 	}
 
 }
