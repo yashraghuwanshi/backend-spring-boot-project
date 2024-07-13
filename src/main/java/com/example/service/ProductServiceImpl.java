@@ -14,9 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
-import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -85,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse getProductByName(String name){
+    public ProductResponse getProductByName(String name) {
         Product product = productRepository.findByName(name);
         return mapper.map(product, ProductResponse.class);
     }
@@ -93,25 +92,29 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductRequest updateProduct(String id, ProductRequest productRequest) {
 
-        System.out.println(productRequest);
+        log.info("Received request to update product with id: {}", id);
+        log.info("ProductRequest: {}", productRequest);
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Product with id: '" + id + "' does not exist in database."));
 
+        log.info("Found existing Product: {}", product);
 
-        List<Supplier> suppliers = productRequest.getSuppliers().stream().map(supplierRequest -> mapper.map(supplierRequest, Supplier.class)).toList();
+        List<Supplier> suppliers = productRequest.getSuppliers().stream().map(supplierRequest ->
+            mapper.map(supplierRequest, Supplier.class)).collect(Collectors.toList());
 
         product.setName(productRequest.getName());
         product.setDescription(productRequest.getDescription());
         product.setSku(productRequest.getSku());
         product.setPrice(productRequest.getPrice());
         product.setQuantity(productRequest.getQuantity());
+        product.setSuppliers(suppliers);
 
-        product.getSuppliers().addAll(suppliers);
+        log.info("Updated Product: {}", product);
 
-        productRepository.save(product);
+        product = productRepository.save(product);
 
-        System.out.println("Updated Product " + product);
+        log.info("Saved Product: {}", product);
 
         return mapper.map(product, ProductRequest.class);
     }
@@ -154,9 +157,7 @@ public class ProductServiceImpl implements ProductService {
 
         List<Supplier> suppliers = product.getSuppliers();
 
-        suppliers.forEach(supplier -> {
-            supplierRepository.softDeleteById(supplier.getId());
-        });
+        suppliers.forEach(supplier -> supplierRepository.softDeleteById(supplier.getId()));
 
      /*
      using below approach cause the Hibernate to generate update statements for all columns
@@ -177,7 +178,7 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
-    public void getSession(){
+    public void getSession() {
 
         Session session = sessionFactory.getCurrentSession();
 

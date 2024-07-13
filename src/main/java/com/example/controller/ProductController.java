@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-@SuppressWarnings("all")
 @RequestMapping("/api/v1")
 @RestController
 @CrossOrigin(origins = {"http://localhost:4200/"})
@@ -36,6 +35,7 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/get-products")
     public CompletableFuture<List<ProductResponse>> getProducts() {
+        logger.info("Successfully retrieved list of products");
         return productService.getProducts();
     }
 

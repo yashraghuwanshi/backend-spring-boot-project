@@ -35,7 +35,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: info, metrics
+        include: '*'
   info:
     env:
       enabled: true
@@ -62,4 +62,5 @@ logging:
     root: info
     org.hibernate.SQL: info
     org.springframework.web: debug
+
 
