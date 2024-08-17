@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -75,6 +76,12 @@ public class ProductController {
     @DeleteMapping("/soft-delete-product/{id}")
     public void softDelete(@PathVariable("id") String productId) {
         productService.softDelete(productId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/filtered-products")
+    public List<ProductResponse> filterProductsGreaterThan(@RequestParam("price") BigDecimal price) {
+        return productService.filterProductsGreaterThan(price);
     }
 
 }
