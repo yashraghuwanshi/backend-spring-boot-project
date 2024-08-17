@@ -23,8 +23,11 @@ import org.hibernate.query.Query;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -88,7 +91,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByName(name);
         return mapper.map(product, ProductResponse.class);
     }
-
+    
     @Override
     public ProductRequest updateProduct(String id, ProductRequest productRequest) {
 
@@ -101,7 +104,7 @@ public class ProductServiceImpl implements ProductService {
         log.info("Found existing Product: {}", product);
 
         List<Supplier> suppliers = productRequest.getSuppliers().stream().map(supplierRequest ->
-            mapper.map(supplierRequest, Supplier.class)).collect(Collectors.toList());
+                mapper.map(supplierRequest, Supplier.class)).collect(Collectors.toList());
 
         product.setName(productRequest.getName());
         product.setDescription(productRequest.getDescription());
@@ -178,18 +181,41 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
-    public void getSession() {
+    public List<ProductResponse> filterProductsGreaterThan(BigDecimal price) {
 
-        Session session = sessionFactory.getCurrentSession();
+        Session session = null;
+        Transaction tx = null;
+        List<Product> products = null;
 
-        Transaction transaction = session.beginTransaction();
+        try {
 
-        String hql = "SELECT * FROM Product WHERE id = ";
+            session = sessionFactory.openSession();
 
-        Query<Product> query = session.createQuery(hql, Product.class);
+            tx = session.beginTransaction();
 
-        query.executeUpdate();
+            String hql = "SELECT p FROM Product p WHERE p.price > :price";
 
+            Query<Product> query = session.createQuery(hql, Product.class);
+            query.setParameter("price", price);
+
+            products = query.list();
+
+            tx.commit();
+
+        } catch (Exception ex) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            ex.printStackTrace();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+
+        return Objects.requireNonNull(products)
+                .stream().map(product -> mapper.map(product, ProductResponse.class))
+                .collect(Collectors.toList());
 
     }
 }

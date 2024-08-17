@@ -5,6 +5,7 @@ import com.example.dto.ProductResponse;
 import com.github.fge.jsonpatch.JsonPatch;
 import org.springframework.data.projection.ProjectionFactory;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -25,4 +26,6 @@ public interface ProductService {
     void deleteProductById(String id);
 
     void softDelete(String id);
+
+    List<ProductResponse> filterProductsGreaterThan(BigDecimal price);
 }
